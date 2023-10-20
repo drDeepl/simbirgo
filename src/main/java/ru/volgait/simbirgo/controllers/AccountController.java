@@ -81,8 +81,9 @@ public class AccountController {
             return null;
         }
         final UserDetails accountDetails = accountDetailsService.loadUserByUsername(authenticationRequest.getUsername());
+        boolean isAdminAccount = accountDetails.getAuthorities().toArray()[0].toString() == "ROLE_ADMIN";
 
-        final String jwt = jwtUtil.generateToken(accountDetails.getUsername());
+        final String jwt = jwtUtil.generateToken(accountDetails.getUsername(), isAdminAccount);
         return new AuthenticationResponse(jwt);
 
     }

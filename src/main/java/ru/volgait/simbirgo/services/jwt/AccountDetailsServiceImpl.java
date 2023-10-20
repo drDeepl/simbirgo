@@ -1,6 +1,7 @@
 package ru.volgait.simbirgo.services.jwt;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -10,6 +11,7 @@ import ru.volgait.simbirgo.models.Account;
 import ru.volgait.simbirgo.repositories.AccountRepository;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class AccountDetailsServiceImpl implements UserDetailsService {
@@ -24,6 +26,8 @@ public class AccountDetailsServiceImpl implements UserDetailsService {
         }
 
 
-        return new User(account.getUsername(), account.getPassword(),new ArrayList<>());
+
+
+        return new User(account.getUsername(), account.getPassword(), List.of(new SimpleGrantedAuthority(account.isAdmin() ? "ROLE_ADMIN" : "ROLE_USER")));
     }
 }
