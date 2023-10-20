@@ -4,6 +4,7 @@ package ru.volgait.simbirgo.controllers;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.engine.jdbc.spi.SqlExceptionHelper;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -20,6 +21,7 @@ import ru.volgait.simbirgo.dto.AccountDTO;
 import ru.volgait.simbirgo.dto.AuthenticationRequest;
 import ru.volgait.simbirgo.dto.AuthenticationResponse;
 import ru.volgait.simbirgo.dto.SignupRequest;
+import ru.volgait.simbirgo.filters.JwtRequestFilter;
 import ru.volgait.simbirgo.services.AuthService;
 import ru.volgait.simbirgo.services.jwt.AccountDetailsServiceImpl;
 import ru.volgait.simbirgo.utils.JwtUtil;
@@ -33,6 +35,8 @@ import java.security.Principal;
 @RequestMapping("/api/account")
 @RequiredArgsConstructor
 public class AccountController {
+
+    private Logger LOGGER = LoggerFactory.getLogger(JwtRequestFilter.class);
 
     @Autowired
     private final AuthService authService;
@@ -77,6 +81,7 @@ public class AccountController {
             return null;
         }
         final UserDetails accountDetails = accountDetailsService.loadUserByUsername(authenticationRequest.getUsername());
+
         final String jwt = jwtUtil.generateToken(accountDetails.getUsername());
         return new AuthenticationResponse(jwt);
 
@@ -87,6 +92,7 @@ public class AccountController {
 
     @GetMapping("/me")
     public String userData(Principal principal){
+        LOGGER.info("api/acccount/me/userData");
         return principal.getName();
     }
 
